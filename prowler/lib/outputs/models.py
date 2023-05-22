@@ -134,7 +134,7 @@ def fill_common_data_csv(finding: dict) -> dict:
         "severity": finding.check_metadata.Severity,
         "resource_type": finding.check_metadata.ResourceType,
         "resource_details": finding.resource_details,
-        "resource_tags": unroll_tags(finding.resource_tags),
+        "resource_tags": ' | '.join(unroll_tags(finding.resource_tags)),
         "description": finding.check_metadata.Description,
         "risk": finding.check_metadata.Risk,
         "related_url": finding.check_metadata.RelatedUrl,
@@ -177,39 +177,25 @@ def unroll_list(listed_items: list):
     return unrolled_items
 
 
-def unroll_tags(tags: list):
-    unrolled_items = ""
-    separator = "|"
+def unroll_tags(tags: list) -> list:
+    current_key_name = ""
+    unrolled_items = []
+
     if tags and tags != [{}] and tags != [None]:
         for item in tags:
             # Check if there are tags in list
             if type(item) == dict:
                 for key, value in item.items():
-                    if not unrolled_items:
-                        # Check the pattern of tags (Key:Value or Key:key/Value:value)
-                        if "Key" != key and "Value" != key:
-                            unrolled_items = f"{key}={value}"
-                        else:
-                            if "Key" == key:
-                                unrolled_items = f"{value}="
-                            else:
-                                unrolled_items = f"{value}"
-                    else:
-                        if "Key" != key and "Value" != key:
-                            unrolled_items = (
-                                f"{unrolled_items} {separator} {key}={value}"
-                            )
-                        else:
-                            if "Key" == key:
-                                unrolled_items = (
-                                    f"{unrolled_items} {separator} {value}="
-                                )
-                            else:
-                                unrolled_items = f"{unrolled_items}{value}"
-            elif not unrolled_items:
-                unrolled_items = f"{item}"
+                    # Check the pattern of tags (Key:Value or Key:key/Value:value)
+                    if "Key" != key and "Value" != key:
+                        unrolled_items.append(f"{key}={value}")
+                    elif not current_key_name:
+                        current_key_name = value
+                    elif current_key_name:
+                        unrolled_items.append(f"{current_key_name}={value}")
+                        current_key_name = ""
             else:
-                unrolled_items = f"{unrolled_items} {separator} {item}"
+                unrolled_items.append(item)
 
     return unrolled_items
 

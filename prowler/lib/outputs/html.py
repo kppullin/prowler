@@ -185,7 +185,7 @@ def fill_html(file_descriptor, finding, output_options):
                     <td>{finding.check_metadata.CheckID.replace("_", "<wbr>_")}</td>
                     <td>{finding.check_metadata.CheckTitle}</td>
                     <td>{finding.resource_id.replace("<", "&lt;").replace(">", "&gt;").replace("_", "<wbr>_")}</td>
-                    <td>{parse_html_string(unroll_tags(finding.resource_tags))}</td>
+                    <td>{parse_html_string(' | '.join(unroll_tags(finding.resource_tags)))}</td>
                     <td>{finding.status_extended.replace("<", "&lt;").replace(">", "&gt;").replace("_", "<wbr>_")}</td>
                     <td><p class="show-read-more">{finding.check_metadata.Risk}</p></td>
                     <td><p class="show-read-more">{finding.check_metadata.Remediation.Recommendation.Text}</p> <a class="read-more" href="{finding.check_metadata.Remediation.Recommendation.Url}"><i class="fas fa-external-link-alt"></i></a></td>

@@ -232,14 +232,20 @@ class Test_Outputs:
                 "test3": "value3",
             }
         ]
-        assert (
-            unroll_tags(dict_list)
-            == "name=test | project=prowler | environment=dev | terraform=true"
-        )
-        assert (
-            unroll_tags(unique_dict_list)
-            == "test1=value1 | test2=value2 | test3=value3"
-        )
+
+        unrolled_dict_list = unroll_tags(dict_list)
+        unrolled_unique_dict_list = unroll_tags(unique_dict_list)
+
+        assert len(unrolled_dict_list) == 4
+        assert "name=test" in unrolled_dict_list
+        assert "project=prowler" in unrolled_dict_list
+        assert "environment=dev" in unrolled_dict_list
+        assert "terraform=true" in unrolled_dict_list
+
+        assert len(unrolled_unique_dict_list) == 3
+        assert "test1=value1" in unrolled_unique_dict_list
+        assert "test2=value2" in unrolled_unique_dict_list
+        assert "test3=value3" in unrolled_unique_dict_list
 
     def test_unroll_dict(self):
         test_compliance_dict = {
